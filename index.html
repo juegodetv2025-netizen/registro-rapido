@@ -4,23 +4,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Registro rápido de día laborado · LICONSUMAR</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230c1930'/%3E%3Ctext x='50' y='68' font-size='58' text-anchor='middle' fill='%23f5a524'%3E🚚%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 
 :root{
-  --navy:#12283f;
-  --navy-2:#0c1c2e;
-  --accent:#f2994a;
-  --accent-dark:#d97e34;
-  --paper:#f5f3ee;
+  --navy:#0c1930;
+  --navy-2:#070f1f;
+  --navy-soft:#16283f;
+  --amber:#f5a524;
+  --amber-2:#ff8a1f;
+  --amber-dark:#c9740f;
+  --copper:#b8622a;
+  --paper:#f4efe4;
   --card:#ffffff;
-  --ink:#1b232c;
-  --ink-soft:#5b6673;
-  --line:#e1dccd;
-  --line-strong:#c9c2ac;
-  --success:#2f9e63;
-  --danger:#d1495b;
-  --radius:10px;
+  --ink:#182233;
+  --ink-soft:#5c6b81;
+  --line:#e5decb;
+  --line-strong:#cdc2a4;
+  --success:#22b573;
+  --danger:#e4495f;
+  --teal:#1fb6a8;
+  --radius:14px;
+  --shadow-lg:0 30px 60px -20px rgba(6,14,28,0.55);
+  --shadow-sm:0 10px 24px -12px rgba(6,14,28,0.28);
 }
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
@@ -36,25 +46,54 @@ button{font-family:inherit;cursor:pointer;}
 input,select,textarea{font-family:inherit;}
 a{color:inherit;}
 
-/* ---------- LOGIN ---------- */
+@keyframes fadeSlideUp{ from{opacity:0; transform:translateY(18px);} to{opacity:1; transform:translateY(0);} }
+@keyframes floatY{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
+@keyframes truckMove{
+  0%{ transform:translateX(-6%); }
+  50%{ transform:translateX(6%); }
+  100%{ transform:translateX(-6%); }
+}
+@keyframes dashScroll{ to{ background-position:-80px 0; } }
+@keyframes pulseRing{
+  0%{ box-shadow:0 0 0 0 rgba(245,165,36,0.45); }
+  70%{ box-shadow:0 0 0 16px rgba(245,165,36,0); }
+  100%{ box-shadow:0 0 0 0 rgba(245,165,36,0); }
+}
+@keyframes spinSlow{ to{ transform:rotate(360deg); } }
+@keyframes shine{
+  0%{ background-position:-120% 0; }
+  100%{ background-position:220% 0; }
+}
+
+/* ---------- LOGISTICS BACKDROP ---------- */
+.road-strip{
+  position:fixed; top:0; left:0; right:0; height:5px; z-index:5;
+  background-image:repeating-linear-gradient(90deg, var(--amber) 0 26px, transparent 26px 46px);
+  background-size:46px 5px;
+  animation:dashScroll 1.4s linear infinite;
+  opacity:.9;
+}
+.crate-icon,.route-icon,.bottle-icon{display:inline-flex;vertical-align:middle;}
+
+/* ---------- LOGIN / QUICK SCREEN ---------- */
 #login-screen{
   min-height:100vh;display:flex;align-items:center;justify-content:center;
   background:
-    radial-gradient(circle at 15% 20%, rgba(242,153,74,0.16), transparent 45%),
-    radial-gradient(circle at 85% 80%, rgba(18,40,63,0.18), transparent 45%),
+    radial-gradient(circle at 15% 20%, rgba(245,165,36,0.18), transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(31,182,168,0.14), transparent 45%),
     var(--navy);
   padding:24px;
 }
 .login-card{
-  width:100%;max-width:940px;background:var(--paper);border-radius:18px;
+  width:100%;max-width:940px;background:var(--paper);border-radius:20px;
   overflow:hidden;display:grid;grid-template-columns:1.1fr 1.4fr;
-  box-shadow:0 30px 60px -20px rgba(0,0,0,0.5);
+  box-shadow:var(--shadow-lg);
 }
 #quick-screen{
   display:none;min-height:100vh;align-items:center;justify-content:center;
   background:
-    radial-gradient(circle at 15% 20%, rgba(242,153,74,0.16), transparent 45%),
-    radial-gradient(circle at 85% 80%, rgba(18,40,63,0.18), transparent 45%),
+    radial-gradient(circle at 15% 20%, rgba(245,165,36,0.18), transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(31,182,168,0.14), transparent 45%),
     var(--navy);
   padding:24px;
 }
@@ -63,44 +102,46 @@ a{color:inherit;}
 .login-hero{
   background:linear-gradient(160deg,var(--navy) 0%,var(--navy-2) 100%);
   color:#fff;padding:40px 34px;display:flex;flex-direction:column;justify-content:space-between;
-  position:relative;
+  position:relative;overflow:hidden;
 }
 .login-hero .platenum{
   font-family:'IBM Plex Mono',monospace;letter-spacing:3px;font-weight:600;
-  background:var(--accent);color:var(--navy-2);display:inline-block;padding:6px 12px;border-radius:5px;
+  background:linear-gradient(120deg,var(--amber),var(--amber-2));color:var(--navy-2);display:inline-block;padding:6px 12px;border-radius:6px;
   font-size:13px;margin-bottom:18px;
 }
 .login-hero h1{font-size:28px;line-height:1.2;margin:0 0 10px;}
 .login-hero p{color:#c7d0dc;font-size:14px;line-height:1.6;}
 .route-line{margin-top:30px;border-top:1px dashed rgba(255,255,255,0.25);padding-top:16px;font-size:12px;color:#9fb0c2;}
 .login-body{padding:38px 36px;}
-.seg-tabs{display:flex;background:#ece7d9;border-radius:10px;padding:4px;margin-bottom:22px;}
-.seg-tabs button{flex:1;border:none;background:transparent;padding:10px 8px;border-radius:8px;font-weight:600;font-size:13.5px;color:var(--ink-soft);}
+.seg-tabs{display:flex;background:#ece4d0;border-radius:12px;padding:4px;margin-bottom:22px;}
+.seg-tabs button{flex:1;border:none;background:transparent;padding:10px 8px;border-radius:9px;font-weight:600;font-size:13.5px;color:var(--ink-soft);transition:background .18s ease,color .18s ease;}
 .seg-tabs button.active{background:var(--navy);color:#fff;}
 .subtabs{display:flex;gap:18px;margin-bottom:18px;border-bottom:1px solid var(--line);}
 .subtabs button{background:none;border:none;padding:6px 2px 10px;font-size:13.5px;font-weight:600;color:var(--ink-soft);border-bottom:2px solid transparent;}
-.subtabs button.active{color:var(--navy);border-color:var(--accent);}
+.subtabs button.active{color:var(--navy);border-color:var(--amber);}
 .field{margin-bottom:14px;}
 .field label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-soft);margin-bottom:5px;letter-spacing:.2px;}
 .field input,.field select,.field textarea{
-  width:100%;padding:10px 12px;border:1px solid var(--line-strong);border-radius:8px;
-  font-size:14px;background:#fff;color:var(--ink);
+  width:100%;padding:11px 13px;border:1.5px solid var(--line-strong);border-radius:10px;
+  font-size:14px;background:#fff;color:var(--ink);transition:border-color .15s ease, box-shadow .15s ease;
 }
-.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--accent);border-color:var(--accent);}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 4px rgba(245,165,36,0.16);}
 .btn{
-  border:none;border-radius:8px;padding:11px 18px;font-weight:600;font-size:14px;
-  display:inline-flex;align-items:center;gap:8px;justify-content:center;transition:transform .05s ease;
+  border:none;border-radius:10px;padding:12px 18px;font-weight:700;font-size:14px;
+  display:inline-flex;align-items:center;gap:8px;justify-content:center;
+  transition:transform .12s ease, box-shadow .18s ease, background .18s ease;
+  position:relative;
 }
-.btn:active{transform:scale(0.98);}
-.btn-primary{background:var(--accent);color:#211200;}
-.btn-primary:hover{background:var(--accent-dark);}
-.btn-navy{background:var(--navy);color:#fff;}
-.btn-navy:hover{background:var(--navy-2);}
-.btn-ghost{background:transparent;color:var(--navy);border:1px solid var(--line-strong);}
-.btn-ghost:hover{background:#efeadd;}
-.btn-danger{background:#fbe7e9;color:var(--danger);}
-.btn-danger:hover{background:#f6d3d6;}
-.btn-sm{padding:6px 10px;font-size:12.5px;border-radius:6px;}
+.btn:active{transform:scale(0.97);}
+.btn-primary{background:linear-gradient(120deg,var(--amber) 0%,var(--amber-2) 100%);color:#231200;box-shadow:0 10px 22px -8px rgba(245,165,36,0.6);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 26px -8px rgba(245,165,36,0.75);}
+.btn-navy{background:linear-gradient(120deg,var(--navy) 0%,var(--navy-soft) 100%);color:#fff;}
+.btn-navy:hover{transform:translateY(-2px);box-shadow:0 12px 22px -10px rgba(12,25,48,0.65);}
+.btn-ghost{background:transparent;color:var(--navy);border:1.5px solid var(--line-strong);}
+.btn-ghost:hover{background:#efe9d8;border-color:var(--amber);}
+.btn-danger{background:#fce6e9;color:var(--danger);}
+.btn-danger:hover{background:#f7d1d7;}
+.btn-sm{padding:7px 11px;font-size:12.5px;border-radius:8px;}
 .btn-block{width:100%;}
 .link-btn{background:none;border:none;color:var(--navy);font-weight:600;font-size:12.5px;text-decoration:underline;padding:0;}
 
@@ -108,18 +149,19 @@ a{color:inherit;}
 html,body{overflow-x:hidden;max-width:100%;}
 #app-screen{display:none;min-height:100vh;grid-template-columns:230px 1fr;}
 #app-screen.show{display:grid;}
-.sidebar{background:var(--navy);color:#fff;padding:22px 16px;display:flex;flex-direction:column;}
+.sidebar{background:linear-gradient(180deg,var(--navy) 0%,var(--navy-2) 100%);color:#fff;padding:22px 16px;display:flex;flex-direction:column;}
 .sidebar .brand{font-size:16px;font-weight:700;margin-bottom:2px;}
 .sidebar .brand small{display:block;color:#9fb0c2;font-weight:400;font-size:11px;font-family:'Inter',sans-serif;margin-top:2px;}
-.sidebar .user-chip{margin-top:20px;background:rgba(255,255,255,0.06);border-radius:10px;padding:12px;font-size:12.5px;}
+.sidebar .user-chip{margin-top:20px;background:rgba(255,255,255,0.07);border-radius:12px;padding:12px;font-size:12.5px;}
 .sidebar .user-chip .nm{font-weight:600;font-size:13.5px;}
 .sidebar .user-chip .cc{color:#9fb0c2;font-family:'IBM Plex Mono',monospace;margin-top:2px;}
 .nav-item{
-  display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:8px;color:#c7d0dc;
+  display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:10px;color:#c7d0dc;
   font-size:13.5px;font-weight:600;margin-top:6px;background:none;border:none;text-align:left;width:100%;
+  transition:background .15s ease, color .15s ease;
 }
-.nav-item.active{background:var(--accent);color:#211200;}
-.nav-item:hover:not(.active){background:rgba(255,255,255,0.08);}
+.nav-item.active{background:linear-gradient(120deg,var(--amber),var(--amber-2));color:#211200;}
+.nav-item:hover:not(.active){background:rgba(255,255,255,0.09);}
 .nav-group{margin-top:22px;flex:1;}
 .sidebar .logout{margin-top:auto;}
 .main{padding:28px 34px;overflow-y:auto;height:100vh;}
@@ -128,7 +170,7 @@ html,body{overflow-x:hidden;max-width:100%;}
 .topline .sub{color:var(--ink-soft);font-size:13px;margin-top:3px;}
 .view{display:none;}
 .view.active{display:block;}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin-bottom:18px;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin-bottom:18px;box-shadow:var(--shadow-sm);}
 .card h3{margin:0 0 16px;font-size:15.5px;}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
@@ -181,47 +223,54 @@ html,body{overflow-x:hidden;max-width:100%;}
 
 /* Ticket-style waybill card for día laborado */
 .ticket{
-  background:#fff;border:1px solid var(--line);border-radius:8px;padding:16px 18px 16px 20px;
-  margin-bottom:12px;position:relative;border-left:6px dashed var(--accent);
+  background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px 16px 20px;
+  margin-bottom:12px;position:relative;border-left:6px solid var(--amber);
   display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;
+  box-shadow:var(--shadow-sm);transition:transform .15s ease, box-shadow .15s ease;
 }
+.ticket::before{
+  content:'';position:absolute;left:-1px;top:0;bottom:0;width:6px;
+  background-image:repeating-linear-gradient(180deg,#fff 0 6px,transparent 6px 12px);
+  opacity:.55;
+}
+.ticket:hover{transform:translateY(-2px);box-shadow:0 16px 30px -14px rgba(12,25,48,0.35);}
 .ticket .platebadge{
-  font-family:'IBM Plex Mono',monospace;background:var(--navy);color:#fff;font-weight:600;
-  padding:4px 9px;border-radius:5px;font-size:12.5px;letter-spacing:1px;
+  font-family:'IBM Plex Mono',monospace;background:linear-gradient(120deg,var(--navy),var(--navy-soft));color:#fff;font-weight:700;
+  padding:5px 10px;border-radius:6px;font-size:12.5px;letter-spacing:1px;
 }
 .ticket .tk-main{display:flex;flex-direction:column;gap:5px;flex:1;min-width:220px;}
 .ticket .tk-date{font-weight:700;font-size:13.5px;}
 .ticket .tk-desc{color:var(--ink-soft);font-size:12.5px;}
-.ticket .tk-val{font-weight:700;color:var(--navy);font-size:15px;}
+.ticket .tk-val{font-weight:800;color:var(--navy);font-size:15px;}
 .ticket.discount{border-left-color:var(--danger);}
 .ticket.discount .tk-val{color:var(--danger);}
 .ticket-actions{display:flex;gap:6px;}
 
 table.datatable{width:100%;border-collapse:collapse;font-size:13px;}
-table.datatable th{text-align:left;background:#eee8d8;padding:9px 10px;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-soft);}
+table.datatable th{text-align:left;background:#ece4d0;padding:9px 10px;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-soft);}
 table.datatable td{padding:9px 10px;border-bottom:1px solid var(--line);}
 table.datatable tr:last-child td{border-bottom:none;}
 
-.pill{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
-.pill-orange{background:#fdecd9;color:var(--accent-dark);}
+.pill{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+.pill-orange{background:#fdead0;color:var(--amber-dark);}
 .pill-navy{background:#dfe6ee;color:var(--navy);}
 
 .empty-state{padding:30px;text-align:center;color:var(--ink-soft);font-size:13.5px;}
 
 /* Modal */
 .modal-overlay{
-  position:fixed;inset:0;background:rgba(12,20,30,0.55);display:none;align-items:flex-start;justify-content:center;
-  padding:40px 16px;overflow-y:auto;z-index:1000;
+  position:fixed;inset:0;background:rgba(7,14,26,0.62);display:none;align-items:flex-start;justify-content:center;
+  padding:40px 16px;overflow-y:auto;z-index:1000;backdrop-filter:blur(2px);
 }
 .modal-overlay.show{display:flex;}
-.modal-box{background:#fff;border-radius:14px;max-width:620px;width:100%;padding:26px 28px;position:relative;}
+.modal-box{background:#fff;border-radius:18px;max-width:620px;width:100%;padding:26px 28px;position:relative;box-shadow:var(--shadow-lg);animation:fadeSlideUp .22s ease;}
 .modal-box h3{margin-top:0;}
 .modal-close{position:absolute;top:14px;right:16px;background:none;border:none;font-size:20px;color:var(--ink-soft);}
 .product-row{display:grid;grid-template-columns:2fr 1fr auto;gap:8px;margin-bottom:8px;align-items:center;}
 
 /* Toast */
 #toast{position:fixed;bottom:22px;right:22px;z-index:2000;display:flex;flex-direction:column;gap:8px;}
-.toast-msg{background:var(--navy);color:#fff;padding:12px 16px;border-radius:8px;font-size:13.5px;box-shadow:0 8px 20px rgba(0,0,0,0.25);max-width:300px;}
+.toast-msg{background:var(--navy);color:#fff;padding:12px 16px;border-radius:10px;font-size:13.5px;box-shadow:0 8px 20px rgba(0,0,0,0.28);max-width:300px;animation:fadeSlideUp .2s ease;}
 .toast-msg.err{background:var(--danger);}
 .toast-msg.ok{background:var(--success);}
 
@@ -240,19 +289,19 @@ table.datatable tr:last-child td{border-bottom:none;}
 
 /* Vista previa de reporte antes de generar PDF */
 .preview-overlay{
-  position:fixed;inset:0;background:rgba(12,20,30,0.65);display:none;align-items:flex-start;justify-content:center;
+  position:fixed;inset:0;background:rgba(7,14,26,0.68);display:none;align-items:flex-start;justify-content:center;
   padding:30px 16px;overflow-y:auto;z-index:1100;
 }
 .preview-overlay.show{display:flex;}
 .preview-panel{
-  background:#efece2;border-radius:14px;max-width:920px;width:100%;padding:18px;position:relative;
-  display:flex;flex-direction:column;gap:14px;box-shadow:0 30px 60px -20px rgba(0,0,0,0.5);
+  background:#efe9d9;border-radius:16px;max-width:920px;width:100%;padding:18px;position:relative;
+  display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow-lg);
 }
 .preview-header{display:flex;align-items:center;justify-content:space-between;padding:0 4px;}
 .preview-header h3{margin:0;font-size:16px;}
 .preview-header .small-note{margin:2px 0 0;}
 .preview-frame{
-  background:#d8d3c2;border-radius:10px;padding:20px;overflow:auto;max-height:68vh;
+  background:#d8d0b8;border-radius:12px;padding:20px;overflow:auto;max-height:68vh;
   display:flex;justify-content:center;
 }
 .preview-frame .doc-page{box-shadow:0 10px 30px rgba(0,0,0,0.28);}
@@ -287,33 +336,102 @@ table.datatable tr:last-child td{border-bottom:none;}
 
 body{
   background:
-    radial-gradient(circle at 15% 20%, rgba(242,153,74,0.16), transparent 45%),
-    radial-gradient(circle at 85% 80%, rgba(18,40,63,0.18), transparent 45%),
+    radial-gradient(circle at 12% 15%, rgba(245,165,36,0.14), transparent 42%),
+    radial-gradient(circle at 88% 85%, rgba(31,182,168,0.12), transparent 42%),
     var(--paper);
 }
-.quick-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-.quick-card{width:100%;max-width:520px;background:var(--paper);border-radius:18px;overflow:hidden;box-shadow:0 30px 60px -20px rgba(0,0,0,.30)}
-.quick-body{padding:38px 36px}
-.quick-body .platenum{display:inline-block;margin-bottom:14px}
-.quick-body h1{font-size:26px;margin:0 0 8px}
-.quick-sub{color:var(--ink-soft);font-size:14px;line-height:1.55;margin:0 0 20px}
-.found-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;margin-top:16px}
-.found-name{font-weight:700;font-size:16px}
-.found-meta{font-family:'IBM Plex Mono',monospace;color:var(--ink-soft);font-size:12px;margin-top:4px}
-.found-role{display:inline-block;margin-top:8px;background:#dfe6ee;color:var(--navy);padding:4px 8px;border-radius:999px;font-size:11px;font-weight:700}
-.status{margin-top:14px;font-size:13px}
-.status.err{color:var(--danger)}
-#success-screen{display:none}
+
+/* ---------- QUICK REGISTRO — pantalla principal ---------- */
+.quick-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;position:relative;}
+.quick-card{
+  width:100%;max-width:540px;background:var(--paper);border-radius:22px;overflow:hidden;
+  box-shadow:var(--shadow-lg);border:1px solid rgba(12,25,48,0.06);
+  animation:fadeSlideUp .45s ease;position:relative;
+}
+.quick-hero{
+  background:linear-gradient(150deg,var(--navy) 0%, var(--navy-2) 100%);
+  padding:26px 34px 46px;color:#fff;position:relative;overflow:hidden;
+}
+.quick-hero::after{
+  content:'';position:absolute;left:0;right:0;bottom:0;height:3px;
+  background-image:repeating-linear-gradient(90deg, var(--amber) 0 22px, transparent 22px 40px);
+  animation:dashScroll 1.6s linear infinite;
+}
+.quick-hero .fleet-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;}
+.quick-hero .fleet-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'IBM Plex Mono',monospace;letter-spacing:2.4px;font-weight:700;
+  background:linear-gradient(120deg,var(--amber),var(--amber-2));color:var(--navy-2);
+  padding:7px 13px;border-radius:8px;font-size:12px;
+}
+.quick-hero .truck-badge{
+  width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,0.1);
+  display:flex;align-items:center;justify-content:center;animation:floatY 3.2s ease-in-out infinite;
+}
+.quick-hero h1{font-size:24px;line-height:1.25;margin:0 0 8px;font-family:'Space Grotesk',sans-serif;}
+.quick-hero .quick-sub{color:#c7d0dc;font-size:13.5px;line-height:1.6;margin:0;}
+.quick-body{padding:30px 34px 36px;position:relative;}
+.quick-body .platenum{display:inline-block;margin-bottom:14px;}
+.quick-body h1{font-size:26px;margin:0 0 8px;}
+.quick-sub{color:var(--ink-soft);font-size:14px;line-height:1.55;margin:0 0 20px;}
+.route-track{
+  position:relative;height:20px;margin:2px 0 22px;
+  background-image:linear-gradient(90deg, var(--line-strong) 2px, transparent 2px);
+  background-size:14px 2px;background-repeat:repeat-x;background-position:center;
+}
+.route-track .rt-dot{
+  position:absolute;top:50%;width:9px;height:9px;border-radius:50%;transform:translateY(-50%);
+}
+.route-track .rt-dot.origin{left:0;background:var(--navy);}
+.route-track .rt-dot.dest{right:0;background:var(--amber);}
+.route-track .rt-truck{
+  position:absolute;top:50%;transform:translateY(-70%);animation:truckMove 3.6s ease-in-out infinite;
+}
+.found-card{
+  background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:16px;
+  animation:fadeSlideUp .3s ease;box-shadow:var(--shadow-sm);
+}
+.found-name{font-weight:700;font-size:16px;display:flex;align-items:center;gap:8px;}
+.found-meta{font-family:'IBM Plex Mono',monospace;color:var(--ink-soft);font-size:12px;margin-top:4px;}
+.found-role{display:inline-block;margin-top:8px;background:#dfe6ee;color:var(--navy);padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;}
+.status{margin-top:14px;font-size:13px;}
+.status.err{color:var(--danger);}
+#success-screen{display:none;}
+.success-icon{
+  width:74px;height:74px;border-radius:50%;margin:0 auto 18px;
+  background:linear-gradient(135deg,var(--success),#1a8f5c);
+  display:flex;align-items:center;justify-content:center;color:#fff;
+  animation:pulseRing 1.8s ease-out infinite;
+}
 </style>
 </head>
 <body>
 
+<div class="road-strip"></div>
+
 <div id="lookup-screen" class="quick-screen">
   <div class="quick-card">
-    <div class="quick-body">
-      <span class="platenum">RUTA · CUADRE · COBRO</span>
+    <div class="quick-hero">
+      <div class="fleet-row">
+        <span class="fleet-badge">
+          <svg class="crate-icon" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M3 7L12 3l9 4-9 4-9-4z" stroke="#0c1930" stroke-width="2" stroke-linejoin="round"/><path d="M3 7v10l9 4 9-4V7" stroke="#0c1930" stroke-width="2" stroke-linejoin="round"/><path d="M12 11v10" stroke="#0c1930" stroke-width="2"/></svg>
+          RUTA · CUADRE · COBRO
+        </span>
+        <span class="truck-badge">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M2 7h11v9H2z" stroke="#f5a524" stroke-width="1.6" stroke-linejoin="round"/><path d="M13 10h4l4 3v3h-8z" stroke="#f5a524" stroke-width="1.6" stroke-linejoin="round"/><circle cx="6" cy="18" r="1.8" fill="#f5a524"/><circle cx="17" cy="18" r="1.8" fill="#f5a524"/></svg>
+        </span>
+      </div>
       <h1>Registro rápido de día laborado</h1>
       <p class="quick-sub">Escanea, escribe tu cédula y registra tu día en segundos.</p>
+    </div>
+    <div class="quick-body">
+      <div class="route-track">
+        <span class="rt-dot origin"></span>
+        <span class="rt-truck">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M2 7h11v9H2z" stroke="#0c1930" stroke-width="1.7" stroke-linejoin="round"/><path d="M13 10h4l4 3v3h-8z" stroke="#0c1930" stroke-width="1.7" stroke-linejoin="round"/><circle cx="6" cy="18" r="1.7" fill="#0c1930"/><circle cx="17" cy="18" r="1.7" fill="#0c1930"/></svg>
+        </span>
+        <span class="rt-dot dest"></span>
+      </div>
 
       <div class="field">
         <label>Número de cédula</label>
@@ -321,7 +439,10 @@ body{
                placeholder="Ej. 1082345678"
                onkeydown="if(event.key==='Enter') QuickRegistro.buscar();">
       </div>
-      <button class="btn btn-primary btn-block" onclick="QuickRegistro.buscar()">Buscar mis datos</button>
+      <button class="btn btn-primary btn-block" onclick="QuickRegistro.buscar()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#231200" stroke-width="2.2"/><path d="M21 21l-4.3-4.3" stroke="#231200" stroke-width="2.2" stroke-linecap="round"/></svg>
+        Buscar mis datos
+      </button>
       <div id="quick-status" class="status"></div>
 
       <div id="quick-found" class="found-card hidden">
@@ -341,6 +462,9 @@ body{
 <div id="success-screen" class="quick-screen">
   <div class="quick-card">
     <div class="quick-body" style="text-align:center">
+      <div class="success-icon">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6.5" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
       <span class="platenum">REGISTRO GUARDADO</span>
       <h1>¡Registro guardado!</h1>
       <p class="quick-sub">El día laborado quedó registrado correctamente.</p>
