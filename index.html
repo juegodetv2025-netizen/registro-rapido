@@ -3,449 +3,1073 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Registro rápido · Día laborado</title>
+<title>Registro de Día Laborado — LICONSUMAR</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+
 <style>
 :root{
-  --navy:#12283f;--navy2:#0c1c2e;--accent:#f2994a;--accent-dark:#d97e34;
-  --paper:#f5f3ee;--card:#fff;--ink:#1b232c;--soft:#5b6673;--line:#e1dccd;
-  --line2:#c9c2ac;--ok:#2f9e63;--danger:#d1495b;--r:12px;
+  --navy:#12283f;
+  --navy-2:#0c1c2e;
+  --accent:#f2994a;
+  --accent-dark:#d97e34;
+  --paper:#f5f3ee;
+  --card:#ffffff;
+  --ink:#1b232c;
+  --ink-soft:#5b6673;
+  --line:#e1dccd;
+  --line-strong:#c9c2ac;
+  --success:#2f9e63;
+  --danger:#d1495b;
+  --radius:10px;
 }
-*{box-sizing:border-box} html,body{margin:0;min-height:100%;font-family:Inter,Arial,sans-serif;color:var(--ink)}
-body{background:
- radial-gradient(circle at 15% 10%,rgba(242,153,74,.16),transparent 35%),
- radial-gradient(circle at 90% 90%,rgba(18,40,63,.14),transparent 40%),var(--paper);
- padding:24px}
-.wrapper{max-width:900px;margin:0 auto}
-.hero{text-align:center;margin:12px auto 18px}
-.tag{display:inline-block;background:var(--navy);color:#fff;border-radius:7px;padding:11px 18px;
- font-weight:700;letter-spacing:4px;font-size:14px}
-h1{margin:18px 0 6px;font-size:28px;line-height:1.15}
-.subtitle{color:var(--soft);font-size:16px;margin:0}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:30px;
- box-shadow:0 16px 30px rgba(18,40,63,.08)}
-.step-title{font-size:20px;font-weight:700;margin:0 0 18px}
-.field{margin-bottom:15px}
-label{display:block;font-size:13px;font-weight:700;color:var(--soft);margin-bottom:6px}
-input,select{width:100%;border:1px solid var(--line2);border-radius:10px;padding:13px 14px;
- font-size:15px;background:#fff;color:var(--ink)}
-input:focus,select:focus{outline:2px solid var(--accent);border-color:var(--accent)}
-button{font:inherit;cursor:pointer}
-.btn{border:0;border-radius:10px;padding:13px 18px;font-weight:700}
-.primary{background:var(--accent);color:#211200} .primary:hover{background:var(--accent-dark)}
-.navy{background:var(--navy);color:#fff} .ghost{background:#fff;color:var(--navy);border:1px solid var(--line2)}
-.block{width:100%}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.hidden{display:none!important}
-.identity{border:1px solid var(--line);background:#faf9f5;border-radius:12px;padding:14px 16px;margin-bottom:18px}
-.identity .name{font-size:18px;font-weight:800} .identity .meta{color:var(--soft);font-size:13px;margin-top:3px}
-.role{display:inline-block;margin-top:8px;padding:5px 9px;border-radius:999px;background:#dfe6ee;color:var(--navy);
- font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase}
-.section{border-top:1px solid var(--line);margin:20px 0;padding-top:20px}
-.readonly{background:#f0eee7;font-weight:800}
-.note{font-size:12px;color:var(--soft);margin-top:5px}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
-.message{padding:12px 14px;border-radius:10px;margin-top:14px;font-size:13.5px}
-.message.err{background:#fbe7e9;color:var(--danger)} .message.ok{background:#e5f5ec;color:#226b46}
-#toast{position:fixed;right:22px;bottom:22px;display:flex;flex-direction:column;gap:8px;z-index:20}
-.toast{background:var(--navy);color:#fff;padding:12px 16px;border-radius:9px;box-shadow:0 8px 20px #0002}
-.toast.err{background:var(--danger)} .toast.ok{background:var(--ok)}
-@media(max-width:700px){body{padding:14px} .card{padding:20px} .grid2{grid-template-columns:1fr} h1{font-size:24px}
- .actions .btn{flex:1;min-width:140px}}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+}
+
+h1,h2,h3{font-family:'Space Grotesk',sans-serif;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+button{font-family:inherit;cursor:pointer;}
+input,select,textarea{font-family:inherit;}
+
+/* LAYOUT */
+.container{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(242,153,74,0.16), transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(18,40,63,0.18), transparent 45%),
+    var(--navy);
+}
+
+.card{
+  width:100%;
+  max-width:600px;
+  background:var(--card);
+  border-radius:18px;
+  padding:40px;
+  box-shadow:0 30px 60px -20px rgba(0,0,0,0.5);
+}
+
+.header{
+  text-align:center;
+  margin-bottom:32px;
+}
+
+.header .badge{
+  display:inline-block;
+  font-family:'IBM Plex Mono',monospace;
+  letter-spacing:2px;
+  font-weight:600;
+  background:var(--accent);
+  color:var(--navy-2);
+  padding:8px 14px;
+  border-radius:8px;
+  font-size:12px;
+  margin-bottom:14px;
+}
+
+.header h1{
+  margin:0 0 8px;
+  font-size:28px;
+  color:var(--navy);
+}
+
+.header p{
+  margin:0;
+  font-size:14px;
+  color:var(--ink-soft);
+}
+
+/* STEPS */
+.step{display:none;}
+.step.active{display:block;}
+
+.step-header{
+  display:flex;
+  align-items:center;
+  margin-bottom:24px;
+  gap:12px;
+}
+
+.step-number{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:36px;
+  height:36px;
+  background:var(--accent);
+  color:var(--navy-2);
+  border-radius:50%;
+  font-weight:700;
+  font-size:16px;
+}
+
+.step-header h2{
+  margin:0;
+  font-size:18px;
+  color:var(--navy);
+}
+
+/* FORM FIELDS */
+.field{
+  margin-bottom:16px;
+}
+
+.field label{
+  display:block;
+  font-size:13px;
+  font-weight:600;
+  color:var(--ink-soft);
+  margin-bottom:6px;
+  letter-spacing:.3px;
+}
+
+.field input,
+.field select,
+.field textarea{
+  width:100%;
+  padding:12px 14px;
+  border:1px solid var(--line-strong);
+  border-radius:8px;
+  font-size:14px;
+  background:#fff;
+  color:var(--ink);
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+  outline:2px solid var(--accent);
+  border-color:var(--accent);
+}
+
+.field-group{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+@media (max-width:480px){
+  .field-group{grid-template-columns:1fr;}
+}
+
+.field-row{
+  display:flex;
+  gap:12px;
+  align-items:flex-end;
+}
+
+.field-row .field{
+  flex:1;
+  margin-bottom:0;
+}
+
+#cedula-input{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:16px;
+  letter-spacing:1px;
+}
+
+/* USER INFO */
+.user-info{
+  background:linear-gradient(135deg, rgba(242,153,74,0.08) 0%, rgba(18,40,63,0.06) 100%);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:16px;
+  margin-bottom:20px;
+  display:none;
+}
+
+.user-info.show{display:block;}
+
+.user-info-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+  font-size:14px;
+}
+
+.user-info-row:last-child{margin-bottom:0;}
+
+.user-info-row .label{
+  color:var(--ink-soft);
+  font-weight:500;
+}
+
+.user-info-row .value{
+  font-weight:600;
+  color:var(--navy);
+}
+
+.tipo-badge{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:6px;
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:.5px;
+}
+
+.tipo-badge.transportista{
+  background:rgba(47,158,99,0.12);
+  color:var(--success);
+}
+
+.tipo-badge.auxiliar{
+  background:rgba(242,153,74,0.12);
+  color:var(--accent-dark);
+}
+
+/* BUTTONS */
+.button-group{
+  display:flex;
+  gap:12px;
+  margin-top:24px;
+}
+
+.btn{
+  border:none;
+  border-radius:8px;
+  padding:12px 20px;
+  font-weight:600;
+  font-size:14px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  justify-content:center;
+  transition:all .05s ease;
+  cursor:pointer;
+}
+
+.btn:active{transform:scale(0.98);}
+
+.btn-primary{
+  flex:1;
+  background:var(--accent);
+  color:#211200;
+}
+
+.btn-primary:hover{background:var(--accent-dark);}
+
+.btn-secondary{
+  background:transparent;
+  color:var(--navy);
+  border:1px solid var(--line-strong);
+}
+
+.btn-secondary:hover{background:#efeadd;}
+
+.btn-ghost{
+  background:transparent;
+  color:var(--navy);
+  border:1px solid var(--line-strong);
+}
+
+.btn-ghost:hover{background:#efeadd;}
+
+.btn-danger{
+  background:#fbe7e9;
+  color:var(--danger);
+}
+
+.btn-danger:hover{background:#f6d3d6;}
+
+.btn-block{width:100%;}
+
+.btn-sm{
+  padding:6px 10px;
+  font-size:12.5px;
+  border-radius:6px;
+}
+
+/* LOADING & STATUS */
+.loading{
+  display:inline-block;
+  width:16px;
+  height:16px;
+  border:2px solid rgba(0,0,0,0.1);
+  border-top-color:var(--navy);
+  border-radius:50%;
+  animation:spin .6s linear infinite;
+}
+
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.error-message{
+  background:#fbe7e9;
+  color:var(--danger);
+  padding:12px 14px;
+  border-radius:8px;
+  margin-bottom:16px;
+  font-size:13px;
+  border:1px solid rgba(209,73,91,0.2);
+  display:none;
+}
+
+.error-message.show{display:block;}
+
+/* PRODUCTOS */
+.producto-row{
+  display:grid;
+  grid-template-columns:1fr 100px 40px;
+  gap:8px;
+  align-items:flex-end;
+  margin-bottom:8px;
+  background:#f9f8f6;
+  padding:8px;
+  border-radius:6px;
+}
+
+.producto-row input{
+  padding:8px 10px;
+  border:1px solid var(--line-strong);
+  border-radius:6px;
+  font-size:12px;
+}
+
+.producto-row button{
+  padding:8px 10px;
+  background:var(--danger);
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  font-weight:600;
+  font-size:12px;
+  cursor:pointer;
+}
+
+.producto-row button:hover{
+  background:#c9384c;
+}
+
+/* HIDDEN */
+.hidden{display:none !important;}
+
+/* RESPONSIVE */
+@media (max-width:480px){
+  .card{padding:24px;}
+  .header h1{font-size:22px;}
+  .producto-row{grid-template-columns:1fr 70px 40px;}
+}
 </style>
+
 </head>
 <body>
-<div class="wrapper">
-  <div class="hero">
-    <div class="tag">RUTA · CUADRE · COBRO</div>
-    <h1>Registro rápido de día laborado</h1>
-    <p class="subtitle">Escanea, escribe tu cédula y registra tu día en segundos.</p>
-  </div>
 
+<div class="container">
   <div class="card">
-    <section id="lookup-step">
-      <div class="step-title">1. Identifícate</div>
-      <div class="field">
-        <label for="cedula">Número de cédula</label>
-        <input id="cedula" inputmode="numeric" autocomplete="off"
-               placeholder="Ej. 1082345678" onkeydown="if(event.key==='Enter') Registro.buscar()">
-      </div>
-      <button class="btn primary block" onclick="Registro.buscar()">Buscar mis datos</button>
-      <div id="lookup-msg"></div>
-    </section>
-
-    <section id="form-step" class="hidden">
-      <div class="step-title">2. Registra tu día laborado</div>
-      <div class="identity">
-        <div class="name" id="found-name"></div>
-        <div class="meta" id="found-cc"></div>
-        <div class="role" id="found-role"></div>
+    
+    <!-- STEP 1: Búsqueda de Cédula -->
+    <div class="step active" id="step-cedula">
+      <div class="header">
+        <div class="badge">RUTA · CUADRE · COBRO</div>
+        <h1>Registro de día laborado</h1>
+        <p>Escanea, escribe tu cédula y registra tu día en segundos.</p>
       </div>
 
-      <!-- FORMULARIO TRANSPORTISTA -->
-      <div id="transportista-form" class="hidden">
-        <div class="grid2">
-          <div class="field">
-            <label for="tr-placa">Placa</label>
-            <select id="tr-placa"></select>
-          </div>
-          <div class="field">
-            <label for="tr-fecha">Fecha</label>
-            <input type="date" id="tr-fecha" value="">
-          </div>
-        </div>
+      <div class="error-message" id="error-cedula"></div>
 
-        <div class="field">
-          <label for="tr-ruta">Ruta o estampillado</label>
-          <select id="tr-ruta">
-            <option value="">Selecciona una opción…</option>
-            <option value="Trasporte tipo de pedidos TAT">Trasporte tipo de pedidos TAT</option>
-            <option value="entregas TAT">entregas TAT</option>
-          </select>
-        </div>
+      <div class="step-header">
+        <div class="step-number">1</div>
+        <h2>Identifícate</h2>
+      </div>
 
-        <div class="field">
-          <label for="tr-tipo-ruta">Tipo de ruta</label>
-          <select id="tr-tipo-ruta" onchange="Registro.actualizarValorTransportista()">
-            <option value="">Selecciona una opción…</option>
-            <option value="zona bananera" data-valor="400000">zona bananera</option>
-            <option value="urbano camioneta" data-valor="232000">urbano camioneta</option>
-            <option value="urbano furgon" data-valor="247000">urbano furgon</option>
-          </select>
+      <div class="field-row">
+        <div class="field" style="flex:1;">
+          <label for="cedula-input">Número de cédula</label>
+          <input 
+            type="text" 
+            id="cedula-input" 
+            placeholder="Ej. 1082345678"
+            autocomplete="off"
+          >
         </div>
+        <button class="btn btn-primary" onclick="buscarCedula()" id="btn-buscar">
+          Buscar mis datos
+        </button>
+      </div>
+    </div>
 
-        <div class="field">
-          <label for="tr-valor">Valor por día</label>
-          <input id="tr-valor" class="readonly" value="$ 0" disabled>
-          <div class="note">El valor se asigna automáticamente y no se puede modificar.</div>
+    <!-- STEP 2: Confirmación de Usuario -->
+    <div class="step" id="step-confirmacion">
+      <div class="header">
+        <div class="badge">RUTA · CUADRE · COBRO</div>
+        <h1>Confirma tus datos</h1>
+        <p>Verifica que la información sea correcta antes de continuar.</p>
+      </div>
+
+      <div class="error-message" id="error-confirmacion"></div>
+
+      <div class="user-info show">
+        <div class="user-info-row">
+          <span class="label">Nombre</span>
+          <span class="value" id="conf-nombre">—</span>
         </div>
-
-        <div class="section">
-          <div class="note">Conductor: se guarda en blanco para transportistas, tal como se solicitó.</div>
+        <div class="user-info-row">
+          <span class="label">Cédula</span>
+          <span class="value mono" id="conf-cedula">—</span>
+        </div>
+        <div class="user-info-row">
+          <span class="label">Rol</span>
+          <span class="tipo-badge" id="conf-tipo">—</span>
         </div>
       </div>
 
-      <!-- FORMULARIO AUXILIAR: conserva el formulario de días laborados del sistema actual -->
-      <div id="auxiliar-form" class="hidden">
-        <div class="grid2">
+      <div class="button-group">
+        <button class="btn btn-secondary" onclick="volverPaso1()">Cambiar cédula</button>
+        <button class="btn btn-primary btn-block" onclick="continuarFormulario()">
+          Continuar al formulario
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 3: FORMULARIO AUXILIAR -->
+    <div class="step" id="step-formulario-auxiliar">
+      <div class="header">
+        <div class="badge" style="background:var(--accent);">AUXILIAR</div>
+        <h1>Nuevo día laborado</h1>
+      </div>
+
+      <div class="error-message" id="error-auxiliar"></div>
+
+      <div class="user-info show">
+        <div class="user-info-row">
+          <span class="label">Auxiliar</span>
+          <span class="value" id="aux-nombre">—</span>
+        </div>
+        <div class="user-info-row">
+          <span class="label">CC</span>
+          <span class="value mono" id="aux-cedula">—</span>
+        </div>
+      </div>
+
+      <form id="form-auxiliar" onsubmit="guardarRegistroAuxiliar(event)">
+        
+        <div class="field-group">
           <div class="field">
-            <label for="ax-fecha">Fecha</label>
-            <input type="date" id="ax-fecha">
+            <label for="aux-fecha">Fecha</label>
+            <input type="date" id="aux-fecha" required>
           </div>
           <div class="field">
-            <label for="ax-placa">Placa</label>
-            <select id="ax-placa"></select>
+            <label for="aux-placa">Placa</label>
+            <select id="aux-placa" required>
+              <option value="">Selecciona...</option>
+            </select>
           </div>
         </div>
 
         <div class="field">
-          <label for="ax-concepto">¿Es estampillado o ruta?</label>
-          <select id="ax-concepto" onchange="Registro.onAuxConceptoChange()">
+          <label for="aux-concepto">¿Es estampillado o ruta?</label>
+          <select id="aux-concepto" onchange="cambiarConcepto()" required>
             <option value="Ruta">Ruta</option>
             <option value="Estampillado">Estampillado</option>
             <option value="Cargue">Cargue</option>
           </select>
         </div>
 
-        <div id="ax-ruta-block">
-          <div class="grid2">
+        <!-- BLOQUE RUTA (por defecto visible) -->
+        <div id="ruta-block">
+          <div class="field-group">
             <div class="field">
-              <label for="ax-tipo-ruta">Tipo de ruta</label>
-              <select id="ax-tipo-ruta"></select>
+              <label for="aux-tiposervicio">Tipo de ruta</label>
+              <select id="aux-tiposervicio" onchange="recalcularValor()">
+                <option value="">Selecciona...</option>
+              </select>
             </div>
-            <div class="field" id="ax-conductor-wrap">
-              <label for="ax-conductor">Conductor</label>
-              <select id="ax-conductor"></select>
+            <div class="field">
+              <label for="aux-conductor">Conductor</label>
+              <select id="aux-conductor" onchange="recalcularValor()">
+                <option value="Ninguno">Ninguno</option>
+              </select>
             </div>
           </div>
         </div>
 
-        <div id="ax-estampillado-block" class="hidden">
+        <!-- BLOQUE ESTAMPILLADO (oculto por defecto) -->
+        <div id="estampillado-block" class="hidden">
+          <label style="display:block;font-size:12.5px;font-weight:600;color:var(--ink-soft);margin-bottom:6px;">Productos estampillados (valor de la estampilla: $30 c/u)</label>
+          <div id="productos-rows"></div>
+          <button type="button" class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px;margin-bottom:16px;" onclick="agregarProductoRow()">+ Agregar producto</button>
+        </div>
+
+        <div class="field">
+          <label for="aux-ciudad">Ciudad / población de entrega</label>
+          <select id="aux-ciudad">
+            <option value="">Selecciona...</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="aux-valor">Valor del día</label>
+          <input type="text" id="aux-valor" class="mono" disabled placeholder="$0">
+        </div>
+
+        <div class="button-group">
+          <button type="button" class="btn btn-secondary" onclick="volverPaso1()">Cancelar</button>
+          <button type="submit" class="btn btn-primary btn-block">Guardar registro</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- STEP 3: FORMULARIO TRANSPORTISTA -->
+    <div class="step" id="step-formulario-transportista">
+      <div class="header">
+        <div class="badge" style="background:var(--success);">TRANSPORTISTA</div>
+        <h1>Nuevo día laborado</h1>
+      </div>
+
+      <div class="error-message" id="error-transportista"></div>
+
+      <div class="user-info show">
+        <div class="user-info-row">
+          <span class="label">Transportista</span>
+          <span class="value" id="trans-nombre">—</span>
+        </div>
+        <div class="user-info-row">
+          <span class="label">CC</span>
+          <span class="value mono" id="trans-cedula">—</span>
+        </div>
+      </div>
+
+      <form id="form-transportista" onsubmit="guardarRegistroTransportista(event)">
+        
+        <div class="field-group">
           <div class="field">
-            <label for="ax-producto">Producto estampillado</label>
-            <select id="ax-producto"></select>
+            <label for="trans-fecha">Fecha</label>
+            <input type="date" id="trans-fecha" required>
           </div>
-          <div class="grid2">
-            <div class="field">
-              <label for="ax-cantidad">Cantidad</label>
-              <input id="ax-cantidad" type="number" min="1" value="1" oninput="Registro.recalcAux()">
-            </div>
-            <div class="field">
-              <label>Valor unitario</label>
-              <input class="readonly" value="$ 30" disabled>
-            </div>
+          <div class="field">
+            <label for="trans-placa">Placa</label>
+            <select id="trans-placa" required>
+              <option value="">Selecciona...</option>
+            </select>
           </div>
         </div>
 
         <div class="field">
-          <label for="ax-ciudad">Ciudad / población de entrega</label>
-          <select id="ax-ciudad"></select>
+          <label for="trans-concepto">Ruta o estampillado</label>
+          <select id="trans-concepto" required>
+            <option value="">Selecciona...</option>
+          </select>
         </div>
 
         <div class="field">
-          <label for="ax-valor">Valor del día</label>
-          <input id="ax-valor" class="readonly" value="$ 0" disabled>
+          <label for="trans-tiporuta">Tipo de ruta</label>
+          <select id="trans-tiporuta" onchange="recalcularValorTransportista()" required>
+            <option value="">Selecciona...</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="trans-valor">Valor del día</label>
+          <input type="text" id="trans-valor" class="mono" disabled placeholder="$0">
+        </div>
+
+        <div class="button-group">
+          <button type="button" class="btn btn-secondary" onclick="volverPaso1()">Cancelar</button>
+          <button type="submit" class="btn btn-primary btn-block">Guardar registro</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- STEP 4: Éxito -->
+    <div class="step" id="step-exito">
+      <div class="header" style="margin-bottom:48px;">
+        <div style="font-size:56px;margin-bottom:12px;">✓</div>
+        <h1 style="color:var(--success);">¡Registro completado!</h1>
+        <p>Tu día laborado ha sido guardado correctamente.</p>
+      </div>
+
+      <div class="user-info show">
+        <div class="user-info-row">
+          <span class="label">Fecha</span>
+          <span class="value" id="exito-fecha">—</span>
+        </div>
+        <div class="user-info-row">
+          <span class="label">Usuario</span>
+          <span class="value" id="exito-usuario">—</span>
         </div>
       </div>
 
-      <div class="actions">
-        <button class="btn primary" onclick="Registro.guardar()">Guardar registro</button>
-        <button class="btn ghost" onclick="Registro.reset()">Cambiar cédula</button>
+      <div class="button-group" style="margin-top:32px;">
+        <button class="btn btn-primary btn-block" onclick="volverPaso1()">
+          Registrar otro día
+        </button>
       </div>
+    </div>
 
-      <div id="form-msg"></div>
-    </section>
-
-    <section id="success-step" class="hidden" style="text-align:center">
-      <div class="step-title" style="color:var(--ok)">¡Registro guardado!</div>
-      <p class="subtitle">El día laborado quedó registrado correctamente en la misma base de datos.</p>
-      <button class="btn navy block" onclick="Registro.reset()">Registrar otro día</button>
-    </section>
   </div>
 </div>
 
-<div id="toast"></div>
-
 <script>
-const SUPABASE_URL = 'https://phomutbqbyxeotidwbyy.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBob211dGJxYnl4ZW90aWR3Ynl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMzczMTUsImV4cCI6MjEwMzYxMzMxNX0.mnpgXygyDqcay8paXGCoCoLtCeqq8lkzpo7uoq8Kvbg';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// ============================================================
+// CONFIG SUPABASE
+// ============================================================
 
-const CATALOGOS = {placas:[], conductores:[], tipos_servicio:[], ciudades:[], productos:[]};
-const State = {persona:null, tipo:null, catalogos:CATALOGOS};
+const SUPABASE_URL = 'TU_URL_SUPABASE_AQUI';
+const SUPABASE_KEY = 'TU_CLAVE_PUBLICA_AQUI';
 
-const ROUTE_VALUES = {
-  'zona bananera': 400000,
-  'urbano camioneta': 232000,
-  'urbano furgon': 247000
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ============================================================
+// CONSTANTES (igual al sistema original)
+// ============================================================
+
+const TRANSPORTISTA_CONCEPTOS = ['Ruta', 'Estampillado'];
+const TRANSPORTISTA_TIPOS_RUTA = {
+  'Santa Marta - Rodadero': 50000,
+  'Santa Marta - Centro': 40000,
+  'Intercity': 80000,
 };
 
-function todayISO(){
-  const d = new Date();
-  const off = d.getTimezoneOffset();
-  return new Date(d.getTime()-off*60000).toISOString().slice(0,10);
-}
-function esc(s){return (s==null?'':String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function money(n){return '$ ' + (Number(n)||0).toLocaleString('es-CO',{maximumFractionDigits:0});}
-function toast(msg,type){
-  const d=document.createElement('div'); d.className='toast '+(type||''); d.textContent=msg;
-  document.getElementById('toast').appendChild(d); setTimeout(()=>d.remove(),4000);
-}
-function showMsg(id,msg,type){
-  const el=document.getElementById(id); el.className=msg?'message '+(type||''):'';
-  el.textContent=msg||'';
+// ============================================================
+// STATE
+// ============================================================
+
+let estadoApp = {
+  usuario: null,
+  tipo: null,
+  cedula: null,
+  catalogos: {
+    placas: [],
+    tipos_servicio: [],
+    conductores: [],
+    ciudades: [],
+  },
+  productosEstampillado: [],
+};
+
+// ============================================================
+// UTILIDADES
+// ============================================================
+
+function mostrarPaso(nombrePaso) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById(nombrePaso).classList.add('active');
+  window.scrollTo(0, 0);
 }
 
-async function loadCatalogos(){
-  const queries = [
-    ['placas','placa'],
-    ['conductores','nombre,valor_dia'],
-    ['tipos_servicio','nombre'],
-    ['ciudades','nombre'],
-    ['productos','nombre']
-  ];
-  for(const [table] of queries){
-    const {data,error} = await sb.from(table).select('*');
-    if(error){ console.warn('No se pudo cargar '+table,error.message); continue; }
-    State.catalogos[table] = data || [];
+function mostrarError(elementId, mensaje) {
+  const el = document.getElementById(elementId);
+  if (el) {
+    el.textContent = mensaje;
+    el.classList.add('show');
   }
-  renderSelect('tr-placa',State.catalogos.placas,'placa');
-  renderSelect('ax-placa',State.catalogos.placas,'placa');
-  renderSelect('ax-tipo-ruta',State.catalogos.tipos_servicio,'nombre');
-  renderSelect('ax-conductor',State.catalogos.conductores,'nombre','Ninguno');
-  renderSelect('ax-ciudad',State.catalogos.ciudades,'nombre');
-  renderSelect('ax-producto',State.catalogos.productos,'nombre');
-}
-function renderSelect(id,arr,key,first=''){
-  const el=document.getElementById(id); if(!el) return;
-  let html = '<option value="">Selecciona una opción…</option>';
-  if(first) html += '<option value="'+esc(first)+'">'+esc(first)+'</option>';
-  html += (arr||[]).map(x=>`<option value="${esc(x[key])}">${esc(x[key])}</option>`).join('');
-  el.innerHTML=html;
 }
 
-const Registro = {
-  async buscar(){
-    const cedula=document.getElementById('cedula').value.trim();
-    if(!cedula){showMsg('lookup-msg','Ingresa el número de cédula.','err');return;}
-    showMsg('lookup-msg','Consultando…');
-    try{
-      const [auxRes,condRes] = await Promise.all([
-        sb.from('auxiliares').select('*').eq('cedula',cedula).maybeSingle(),
-        sb.from('conductores_app').select('*').eq('cedula',cedula).maybeSingle()
-      ]);
-      if(auxRes.error && condRes.error) throw new Error(auxRes.error.message+' | '+condRes.error.message);
-      let persona=null,tipo=null;
-      if(auxRes.data){persona=auxRes.data;tipo='auxiliar';}
-      else if(condRes.data){persona=condRes.data;tipo='transportista';}
-      else {
-        showMsg('lookup-msg','No encontramos esa cédula en auxiliares ni en transportistas.','err'); return;
-      }
-      State.persona=persona; State.tipo=tipo;
-      document.getElementById('lookup-step').classList.add('hidden');
-      document.getElementById('success-step').classList.add('hidden');
-      document.getElementById('form-step').classList.remove('hidden');
-      document.getElementById('found-name').textContent=persona.nombre_completo || 'Usuario encontrado';
-      document.getElementById('found-cc').textContent='CC '+persona.cedula;
-      document.getElementById('found-role').textContent=tipo==='transportista'?'Transportista':'Auxiliar';
-      document.getElementById('transportista-form').classList.toggle('hidden',tipo!=='transportista');
-      document.getElementById('auxiliar-form').classList.toggle('hidden',tipo!=='auxiliar');
-      showMsg('lookup-msg','');
-      showMsg('form-msg','');
-      Registro.initForm();
-    }catch(e){
-      showMsg('lookup-msg','No se pudo realizar la consulta: '+e.message,'err');
-    }
-  },
+function ocultarError(elementId) {
+  const el = document.getElementById(elementId);
+  if (el) {
+    el.classList.remove('show');
+  }
+}
 
-  initForm(){
-    const t=todayISO();
-    if(State.tipo==='transportista'){
-      document.getElementById('tr-fecha').value=t;
-      document.getElementById('tr-ruta').value='';
-      document.getElementById('tr-tipo-ruta').value='';
-      document.getElementById('tr-valor').value=money(0);
-      Registro.actualizarValorTransportista();
-    }else{
-      document.getElementById('ax-fecha').value=t;
-      document.getElementById('ax-concepto').value='Ruta';
-      document.getElementById('ax-ruta-block').classList.remove('hidden');
-      document.getElementById('ax-estampillado-block').classList.add('hidden');
-      document.getElementById('ax-conductor-wrap').classList.remove('hidden');
-      document.getElementById('ax-cantidad').value=1;
-      Registro.recalcAux();
-    }
-  },
+function formatoDinero(valor) {
+  return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(valor);
+}
 
-  actualizarValorTransportista(){
-    const tipo=document.getElementById('tr-tipo-ruta').value;
-    const valor=ROUTE_VALUES[tipo]||0;
-    document.getElementById('tr-valor').value=money(valor);
-  },
+function obtenerHoyISO() {
+  return new Date().toISOString().split('T')[0];
+}
 
-  onAuxConceptoChange(){
-    const est=document.getElementById('ax-concepto').value==='Estampillado';
-    document.getElementById('ax-estampillado-block').classList.toggle('hidden',!est);
-    document.getElementById('ax-ruta-block').classList.toggle('hidden',est);
-    if(!est) document.getElementById('ax-conductor-wrap').classList.remove('hidden');
-    Registro.recalcAux();
-  },
+// ============================================================
+// CARGAR CATÁLOGOS
+// ============================================================
 
-  recalcAux(){
-    const concepto=document.getElementById('ax-concepto').value;
-    let valor=0;
-    if(concepto==='Estampillado') valor=(Number(document.getElementById('ax-cantidad').value)||0)*30;
-    else {
-      const c=document.getElementById('ax-conductor').value;
-      const found=(State.catalogos.conductores||[]).find(x=>x.nombre===c);
-      valor=found?Number(found.valor_dia)||0:0;
-    }
-    document.getElementById('ax-valor').value=money(valor);
-  },
+async function cargarCatalogos() {
+  try {
+    const [placas, tipos, conductores, ciudades] = await Promise.all([
+      sb.from('placas').select('*'),
+      sb.from('tipos_servicio').select('*'),
+      sb.from('conductores').select('*'),
+      sb.from('ciudades').select('*'),
+    ]);
 
-  async guardar(){
-    showMsg('form-msg','Guardando…');
-    if(!State.persona||!State.tipo) return;
+    estadoApp.catalogos.placas = placas.data || [];
+    estadoApp.catalogos.tipos_servicio = tipos.data || [];
+    estadoApp.catalogos.conductores = conductores.data || [];
+    estadoApp.catalogos.ciudades = ciudades.data || [];
+  } catch (error) {
+    console.error('Error al cargar catálogos:', error);
+  }
+}
 
-    if(State.tipo==='transportista') return await Registro.guardarTransportista();
-    return await Registro.guardarAuxiliar();
-  },
+// ============================================================
+// PASO 1: BÚSQUEDA
+// ============================================================
 
-  async guardarTransportista(){
-    const fecha=document.getElementById('tr-fecha').value;
-    const placa=document.getElementById('tr-placa').value;
-    const ruta=document.getElementById('tr-ruta').value;
-    const tipoRuta=document.getElementById('tr-tipo-ruta').value;
-    const valor=ROUTE_VALUES[tipoRuta]||0;
-    if(!fecha||!placa||!ruta||!tipoRuta||!valor){
-      showMsg('form-msg','Completa placa, fecha, ruta/estampillado y tipo de ruta.','err'); return;
-    }
+async function buscarCedula() {
+  ocultarError('error-cedula');
+  
+  const cedula = document.getElementById('cedula-input').value.trim();
+  if (!cedula) {
+    mostrarError('error-cedula', 'Por favor ingresa tu número de cédula');
+    return;
+  }
 
-    /*
-      La tabla "registros" es la misma usada por los días laborados del sistema.
-      Para transportistas se guarda auxiliar_id en NULL, conductor en blanco y
-      creado_por="transportista". Esto evita mezclar la identidad del transportista
-      con la de un auxiliar y permite compartir el mismo registro operativo.
-    */
-    const actividad = `${ruta} - ${tipoRuta}`;
-    const payload = {
-      auxiliar_id: null,
-      fecha, placa,
-      conductor: '',
-      valor,
-      tipo_servicio: tipoRuta,
-      concepto: ruta,
-      productos: [],
-      ciudad: '',
-      actividad,
-      firma: '',
-      es_descuento: false,
-      creado_por: 'transportista'
-    };
-    const {error}=await sb.from('registros').insert(payload);
-    if(error){
-      showMsg('form-msg',
-        'La consulta a la base de datos funciona, pero no se pudo guardar este registro de transportista. '
-        +'Verifica que registros.auxiliar_id permita NULL y que las políticas RLS permitan insertar. Detalle: '+error.message,'err');
+  const btnBuscar = document.getElementById('btn-buscar');
+  btnBuscar.disabled = true;
+  btnBuscar.innerHTML = '<span class="loading"></span> Buscando...';
+
+  try {
+    // Buscar auxiliar
+    const { data: auxiliar } = await sb
+      .from('auxiliares')
+      .select('*')
+      .eq('cedula', cedula)
+      .maybeSingle();
+
+    if (auxiliar) {
+      estadoApp.usuario = auxiliar;
+      estadoApp.cedula = cedula;
+      estadoApp.tipo = 'auxiliar';
+      await cargarCatalogos();
+      mostrarConfirmacion();
       return;
     }
-    document.getElementById('form-step').classList.add('hidden');
-    document.getElementById('success-step').classList.remove('hidden');
-    showMsg('form-msg','');
-  },
 
-  async guardarAuxiliar(){
-    const fecha=document.getElementById('ax-fecha').value;
-    const placa=document.getElementById('ax-placa').value;
-    const concepto=document.getElementById('ax-concepto').value;
-    const ciudad=document.getElementById('ax-ciudad').value;
-    let tipoServicio='-', conductor='Ninguno', productos=[], valor=0, actividad='';
+    // Buscar transportista
+    const { data: transportista } = await sb
+      .from('transportistas')
+      .select('*')
+      .eq('cedula', cedula)
+      .maybeSingle();
 
-    if(concepto==='Estampillado'){
-      const producto=document.getElementById('ax-producto').value;
-      const cantidad=Number(document.getElementById('ax-cantidad').value)||0;
-      if(!producto||cantidad<=0){showMsg('form-msg','Selecciona el producto y una cantidad válida.','err');return;}
-      productos=[{referencia:producto,cantidad}];
-      valor=cantidad*30;
-      actividad=`Estampillado (${producto} x${cantidad}) - ${ciudad||''}`;
-    }else{
-      tipoServicio=document.getElementById('ax-tipo-ruta').value;
-      conductor=concepto==='Cargue'?'Ninguno':document.getElementById('ax-conductor').value;
-      const found=(State.catalogos.conductores||[]).find(x=>x.nombre===conductor);
-      valor=found?Number(found.valor_dia)||0:0;
-      actividad=`${tipoServicio} - ${ciudad||''}`;
+    if (transportista) {
+      estadoApp.usuario = transportista;
+      estadoApp.cedula = cedula;
+      estadoApp.tipo = 'transportista';
+      await cargarCatalogos();
+      mostrarConfirmacion();
+      return;
     }
 
-    if(!fecha||!placa||!ciudad||(!tipoServicio&&concepto!=='Estampillado')){
-      showMsg('form-msg','Completa todos los campos requeridos.','err');return;
-    }
-
-    const payload={
-      auxiliar_id: State.persona.id, fecha, placa, conductor, valor, tipo_servicio:tipoServicio,
-      concepto, productos, ciudad, actividad, firma:'', es_descuento:false, creado_por:'auxiliar'
-    };
-    const {error}=await sb.from('registros').insert(payload);
-    if(error){showMsg('form-msg','No se pudo guardar el registro: '+error.message,'err');return;}
-    document.getElementById('form-step').classList.add('hidden');
-    document.getElementById('success-step').classList.remove('hidden');
-  },
-
-  reset(){
-    State.persona=null; State.tipo=null;
-    document.getElementById('cedula').value='';
-    document.getElementById('lookup-msg').textContent='';
-    document.getElementById('form-msg').textContent='';
-    document.getElementById('success-step').classList.add('hidden');
-    document.getElementById('form-step').classList.add('hidden');
-    document.getElementById('lookup-step').classList.remove('hidden');
-    document.getElementById('cedula').focus();
+    mostrarError('error-cedula', '❌ Cédula no encontrada. Verifica el número o contacta al administrador.');
+  } catch (error) {
+    console.error('Error:', error);
+    mostrarError('error-cedula', 'Error al buscar. Intenta de nuevo.');
+  } finally {
+    btnBuscar.disabled = false;
+    btnBuscar.textContent = 'Buscar mis datos';
   }
-};
+}
 
-(async()=>{
-  document.getElementById('cedula').focus();
-  await loadCatalogos();
-})();
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('cedula-input').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') buscarCedula();
+  });
+});
+
+// ============================================================
+// PASO 2: CONFIRMACIÓN
+// ============================================================
+
+function mostrarConfirmacion() {
+  const usuario = estadoApp.usuario;
+  const tipo = estadoApp.tipo;
+
+  document.getElementById('conf-nombre').textContent = usuario.nombre_completo || '—';
+  document.getElementById('conf-cedula').textContent = usuario.cedula;
+  document.getElementById('conf-tipo').textContent = tipo === 'auxiliar' ? '👤 Auxiliar' : '🚗 Transportista';
+  document.getElementById('conf-tipo').className = `tipo-badge ${tipo}`;
+
+  mostrarPaso('step-confirmacion');
+}
+
+function volverPaso1() {
+  estadoApp = { usuario: null, tipo: null, cedula: null, catalogos: { placas: [], tipos_servicio: [], conductores: [], ciudades: [] }, productosEstampillado: [] };
+  document.getElementById('cedula-input').value = '';
+  document.querySelectorAll('.error-message').forEach(el => el.classList.remove('show'));
+  mostrarPaso('step-cedula');
+}
+
+function continuarFormulario() {
+  if (estadoApp.tipo === 'auxiliar') {
+    mostrarFormularioAuxiliar();
+  } else {
+    mostrarFormularioTransportista();
+  }
+}
+
+// ============================================================
+// FORMULARIO AUXILIAR
+// ============================================================
+
+function mostrarFormularioAuxiliar() {
+  const usuario = estadoApp.usuario;
+  
+  document.getElementById('aux-nombre').textContent = usuario.nombre_completo || '—';
+  document.getElementById('aux-cedula').textContent = usuario.cedula;
+  
+  document.getElementById('aux-fecha').value = obtenerHoyISO();
+  
+  const placasHtml = estadoApp.catalogos.placas
+    .map(p => `<option value="${p.placa}">${p.placa}</option>`)
+    .join('');
+  document.getElementById('aux-placa').innerHTML = '<option value="">Selecciona...</option>' + placasHtml;
+  
+  const tiposHtml = estadoApp.catalogos.tipos_servicio
+    .map(t => `<option value="${t.nombre}">${t.nombre}</option>`)
+    .join('');
+  document.getElementById('aux-tiposervicio').innerHTML = '<option value="">Selecciona...</option>' + tiposHtml;
+  
+  const conductoresHtml = estadoApp.catalogos.conductores
+    .map(c => `<option value="${c.nombre}">${c.nombre}</option>`)
+    .join('');
+  document.getElementById('aux-conductor').innerHTML = '<option value="Ninguno">Ninguno</option>' + conductoresHtml;
+  
+  const ciudadesHtml = estadoApp.catalogos.ciudades
+    .map(c => `<option value="${c.nombre}">${c.nombre}</option>`)
+    .join('');
+  document.getElementById('aux-ciudad').innerHTML = '<option value="">Selecciona...</option>' + ciudadesHtml;
+
+  estadoApp.productosEstampillado = [];
+  mostrarPaso('step-formulario-auxiliar');
+  recalcularValor();
+}
+
+function cambiarConcepto() {
+  const concepto = document.getElementById('aux-concepto').value;
+  const rutaBlock = document.getElementById('ruta-block');
+  const estampilladoBlock = document.getElementById('estampillado-block');
+  
+  const esEstampillado = concepto === 'Estampillado';
+  rutaBlock.classList.toggle('hidden', esEstampillado);
+  estampilladoBlock.classList.toggle('hidden', !esEstampillado);
+  
+  if (esEstampillado && !estadoApp.productosEstampillado.length) {
+    estadoApp.productosEstampillado = [{referencia: '', cantidad: 1}];
+  }
+  
+  renderizarProductosRows();
+  recalcularValor();
+}
+
+function agregarProductoRow() {
+  estadoApp.productosEstampillado.push({referencia: '', cantidad: 1});
+  renderizarProductosRows();
+  recalcularValor();
+}
+
+function eliminarProductoRow(idx) {
+  estadoApp.productosEstampillado.splice(idx, 1);
+  renderizarProductosRows();
+  recalcularValor();
+}
+
+function renderizarProductosRows() {
+  const wrap = document.getElementById('productos-rows');
+  if (!wrap) return;
+  
+  wrap.innerHTML = estadoApp.productosEstampillado.map((p, idx) => `
+    <div class="producto-row">
+      <input 
+        type="text" 
+        placeholder="Referencia"
+        value="${p.referencia || ''}"
+        onchange="estadoApp.productosEstampillado[${idx}].referencia = this.value; recalcularValor();"
+      >
+      <input 
+        type="number" 
+        min="1"
+        value="${p.cantidad || 1}"
+        onchange="estadoApp.productosEstampillado[${idx}].cantidad = Number(this.value) || 1; recalcularValor();"
+      >
+      <button type="button" onclick="eliminarProductoRow(${idx})">✕</button>
+    </div>
+  `).join('');
+}
+
+function recalcularValor() {
+  const concepto = document.getElementById('aux-concepto').value;
+  let valor = 0;
+  
+  if (concepto === 'Estampillado') {
+    valor = estadoApp.productosEstampillado.reduce((s, p) => s + (Number(p.cantidad) || 0) * 30, 0);
+  } else if (concepto === 'Cargue') {
+    valor = 0;
+  } else {
+    const nombreConductor = document.getElementById('aux-conductor').value;
+    if (nombreConductor && nombreConductor !== 'Ninguno') {
+      const conductor = estadoApp.catalogos.conductores.find(c => c.nombre === nombreConductor);
+      valor = conductor ? Number(conductor.valor_dia) || 80000 : 80000;
+    }
+  }
+  
+  document.getElementById('aux-valor').value = formatoDinero(valor);
+  return valor;
+}
+
+async function guardarRegistroAuxiliar(event) {
+  event.preventDefault();
+  ocultarError('error-auxiliar');
+
+  const fecha = document.getElementById('aux-fecha').value;
+  const placa = document.getElementById('aux-placa').value;
+  const concepto = document.getElementById('aux-concepto').value;
+  const tipoServicio = document.getElementById('aux-tiposervicio').value;
+  const conductor = document.getElementById('aux-conductor').value;
+  const ciudad = document.getElementById('aux-ciudad').value;
+
+  if (!fecha || !placa) {
+    mostrarError('error-auxiliar', 'Completa fecha y placa');
+    return;
+  }
+
+  const valor = recalcularValor();
+
+  const btn = event.target.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  const btnText = btn.textContent;
+  btn.innerHTML = '<span class="loading"></span> Guardando...';
+
+  try {
+    const payload = {
+      auxiliar_id: estadoApp.usuario.id,
+      cedula: estadoApp.cedula,
+      fecha,
+      placa,
+      concepto,
+      tipo_servicio: tipoServicio || '',
+      conductor: conductor || '',
+      ciudad: ciudad || '',
+      valor,
+      productos: estadoApp.productosEstampillado,
+      actividad: `${concepto}${tipoServicio ? ' - ' + tipoServicio : ''}`,
+      firma: '',
+      es_descuento: false,
+      creado_por: 'auxiliar'
+    };
+
+    const { error } = await sb.from('registros').insert([payload]);
+
+    if (error) {
+      mostrarError('error-auxiliar', `Error: ${error.message}`);
+      return;
+    }
+
+    document.getElementById('exito-fecha').textContent = new Date(fecha).toLocaleDateString('es-CO', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    document.getElementById('exito-usuario').textContent = `${estadoApp.usuario.nombre_completo} (Auxiliar)`;
+    mostrarPaso('step-exito');
+
+  } catch (error) {
+    console.error('Error:', error);
+    mostrarError('error-auxiliar', 'Error al guardar. Intenta de nuevo.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = btnText;
+  }
+}
+
+// ============================================================
+// FORMULARIO TRANSPORTISTA
+// ============================================================
+
+function mostrarFormularioTransportista() {
+  const usuario = estadoApp.usuario;
+  
+  document.getElementById('trans-nombre').textContent = usuario.nombre_completo || '—';
+  document.getElementById('trans-cedula').textContent = usuario.cedula;
+  
+  document.getElementById('trans-fecha').value = obtenerHoyISO();
+  
+  const placasHtml = estadoApp.catalogos.placas
+    .map(p => `<option value="${p.placa}">${p.placa}</option>`)
+    .join('');
+  document.getElementById('trans-placa').innerHTML = '<option value="">Selecciona...</option>' + placasHtml;
+  
+  const conceptosHtml = TRANSPORTISTA_CONCEPTOS
+    .map(c => `<option value="${c}">${c}</option>`)
+    .join('');
+  document.getElementById('trans-concepto').innerHTML = '<option value="">Selecciona...</option>' + conceptosHtml;
+  
+  const rutasHtml = Object.keys(TRANSPORTISTA_TIPOS_RUTA)
+    .map(r => `<option value="${r}">${r}</option>`)
+    .join('');
+  document.getElementById('trans-tiporuta').innerHTML = '<option value="">Selecciona...</option>' + rutasHtml;
+
+  mostrarPaso('step-formulario-transportista');
+}
+
+function recalcularValorTransportista() {
+  const tipoRuta = document.getElementById('trans-tiporuta').value;
+  const valor = TRANSPORTISTA_TIPOS_RUTA[tipoRuta] || 0;
+  document.getElementById('trans-valor').value = formatoDinero(valor);
+}
+
+async function guardarRegistroTransportista(event) {
+  event.preventDefault();
+  ocultarError('error-transportista');
+
+  const fecha = document.getElementById('trans-fecha').value;
+  const placa = document.getElementById('trans-placa').value;
+  const concepto = document.getElementById('trans-concepto').value;
+  const tipoRuta = document.getElementById('trans-tiporuta').value;
+  const valor = TRANSPORTISTA_TIPOS_RUTA[tipoRuta] || 0;
+
+  if (!fecha || !placa || !tipoRuta) {
+    mostrarError('error-transportista', 'Completa todos los campos requeridos');
+    return;
+  }
+
+  const btn = event.target.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  const btnText = btn.textContent;
+  btn.innerHTML = '<span class="loading"></span> Guardando...';
+
+  try {
+    const payload = {
+      auxiliar_id: estadoApp.usuario.id,
+      cedula: estadoApp.cedula,
+      fecha,
+      placa,
+      concepto,
+      tipo_servicio: tipoRuta,
+      conductor: '',
+      valor,
+      productos: [],
+      actividad: `${concepto} - ${tipoRuta}`,
+      firma: '',
+      es_descuento: false,
+      creado_por: 'auxiliar',
+      ciudad: ''
+    };
+
+    const { error } = await sb.from('registros').insert([payload]);
+
+    if (error) {
+      mostrarError('error-transportista', `Error: ${error.message}`);
+      return;
+    }
+
+    document.getElementById('exito-fecha').textContent = new Date(fecha).toLocaleDateString('es-CO', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    document.getElementById('exito-usuario').textContent = `${estadoApp.usuario.nombre_completo} (Transportista)`;
+    mostrarPaso('step-exito');
+
+  } catch (error) {
+    console.error('Error:', error);
+    mostrarError('error-transportista', 'Error al guardar. Intenta de nuevo.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = btnText;
+  }
+}
+
 </script>
+
 </body>
 </html>
