@@ -940,6 +940,7 @@ async function guardarRegistroAuxiliar(event) {
   try {
     const payload = {
       auxiliar_id: estadoApp.usuario.id,
+      cedula: estadoApp.cedula,
       fecha,
       placa,
       concepto,
@@ -1033,6 +1034,7 @@ async function guardarRegistroTransportista(event) {
   try {
     const payload = {
       auxiliar_id: estadoApp.usuario.id,
+      cedula: estadoApp.cedula,
       fecha,
       placa,
       concepto,
