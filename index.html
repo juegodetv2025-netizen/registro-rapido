@@ -505,7 +505,8 @@ const TRANSPORTISTA_CONCEPTOS = ['Transporte tipo de pedidos TAT', 'Entregas TAT
 const TRANSPORTISTA_TIPOS_RUTA = {
   'Zona bananera': 400000,
   'Urbano camioneta': 232000,
-  'Urbano furgón': 247000
+  'Urbano furgón': 247000,
+  'Cienaga': 320000
 };
 
 const State = {
@@ -969,6 +970,11 @@ const Aux = {
 
     const conceptoActual = editing ? editing.concepto : TRANSPORTISTA_CONCEPTOS[0];
     const rutaActual = editing ? editing.tipo_servicio : '';
+    const conductorActual = editing ? editing.conductor : '';
+    const esEntregasTATInicial = conceptoActual === 'Entregas TAT';
+
+    const conductorOptsT = (current) => `<option value="">Selecciona…</option>` +
+      State.catalogos.conductores.map(o=>`<option value="${esc(o.nombre)}" ${current===o.nombre?'selected':''}>${esc(o.nombre)}</option>`).join('');
 
     openModal(`
       <h3>${editing?'Editar':'Nuevo'} día laborado</h3>
@@ -980,40 +986,61 @@ const Aux = {
         </div>
       </div>
       <div class="field"><label>Ruta o estampillado</label>
-        <select id="rf-concepto-t">
+        <select id="rf-concepto-t" onchange="Aux._actualizarCamposTransportista(); Aux._recalcValorTransportista();">
           ${TRANSPORTISTA_CONCEPTOS.map(c=>`<option value="${esc(c)}" ${conceptoActual===c?'selected':''}>${esc(c)}</option>`).join('')}
         </select>
       </div>
-      <div class="field"><label>Tipo de ruta</label>
+      <div class="field ${esEntregasTATInicial?'hidden':''}" id="tiporuta-field-wrap-t"><label>Tipo de ruta</label>
         <select id="rf-tiporuta-t" onchange="Aux._recalcValorTransportista()">
           <option value="">Selecciona…</option>
           ${Object.keys(TRANSPORTISTA_TIPOS_RUTA).map(t=>`<option value="${esc(t)}" ${rutaActual===t?'selected':''}>${esc(t)}</option>`).join('')}
         </select>
+      </div>
+      <div class="field ${esEntregasTATInicial?'':'hidden'}" id="conductor-field-wrap-t"><label>Conductor</label>
+        <select id="rf-conductor-t" onchange="Aux._recalcValorTransportista()">${conductorOptsT(conductorActual)}</select>
       </div>
       <div class="field" style="margin-top:14px;"><label>Valor del día</label><input id="rf-valor" class="mono" value="${editing?editing.valor:0}" disabled></div>
       <button class="btn btn-primary btn-block" style="margin-top:6px;" onclick="Aux._saveRegistroTransportista()">Guardar registro</button>
     `);
     setTimeout(()=>{ Aux._recalcValorTransportista(); }, 30);
   },
+  _actualizarCamposTransportista(){
+    const concepto = document.getElementById('rf-concepto-t').value;
+    const esEntregasTAT = concepto === 'Entregas TAT';
+    document.getElementById('conductor-field-wrap-t').classList.toggle('hidden', !esEntregasTAT);
+    document.getElementById('tiporuta-field-wrap-t').classList.toggle('hidden', esEntregasTAT);
+  },
   _recalcValorTransportista(){
-    const sel = document.getElementById('rf-tiporuta-t');
-    const tipoRuta = sel ? sel.value : '';
-    const valor = TRANSPORTISTA_TIPOS_RUTA[tipoRuta] || 0;
+    const concepto = document.getElementById('rf-concepto-t').value;
+    let valor = 0;
+    if(concepto === 'Entregas TAT'){
+      const selC = document.getElementById('rf-conductor-t');
+      const nombreConductor = selC ? selC.value : '';
+      const conductor = State.catalogos.conductores.find(c=>c.nombre===nombreConductor);
+      valor = conductor ? (Number(conductor.valor_dia)||0) : 0;
+    } else {
+      const sel = document.getElementById('rf-tiporuta-t');
+      const tipoRuta = sel ? sel.value : '';
+      valor = TRANSPORTISTA_TIPOS_RUTA[tipoRuta] || 0;
+    }
     document.getElementById('rf-valor').value = valor;
   },
   async _saveRegistroTransportista(){
     const fecha = document.getElementById('rf-fecha').value;
     const placa = document.getElementById('rf-placa').value;
     const concepto = document.getElementById('rf-concepto-t').value;
-    const tipo_servicio = document.getElementById('rf-tiporuta-t').value;
+    const esEntregasTAT = concepto === 'Entregas TAT';
+    const tipo_servicio = esEntregasTAT ? '' : document.getElementById('rf-tiporuta-t').value;
+    const conductor = esEntregasTAT ? document.getElementById('rf-conductor-t').value : '';
     const valor = Number(document.getElementById('rf-valor').value)||0;
 
     if(placa==='__nuevo__'){ toast('Guarda la placa nueva antes de continuar','err'); return; }
     if(!fecha || !placa){ toast('Completa la fecha y la placa','err'); return; }
-    if(!tipo_servicio){ toast('Selecciona el tipo de ruta','err'); return; }
+    if(esEntregasTAT && !conductor){ toast('Selecciona el conductor','err'); return; }
+    if(!esEntregasTAT && !tipo_servicio){ toast('Selecciona el tipo de ruta','err'); return; }
 
-    const actividad = `${concepto} - ${tipo_servicio}`;
-    const payload = { auxiliar_id: State.session.auxiliar.id, fecha, placa, conductor:'', valor, tipo_servicio, concepto, productos:[], ciudad:'', actividad, firma:'', es_descuento:false, creado_por:'auxiliar' };
+    const actividad = esEntregasTAT ? `${concepto} - ${conductor}` : `${concepto} - ${tipo_servicio}`;
+    const payload = { auxiliar_id: State.session.auxiliar.id, fecha, placa, conductor, valor, tipo_servicio, concepto, productos:[], ciudad:'', actividad, firma:'', es_descuento:false, creado_por:'auxiliar' };
 
     let error;
     if(State.editRegistroId){
